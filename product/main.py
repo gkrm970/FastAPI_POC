@@ -16,7 +16,7 @@ app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
 
-@app.post('/product', status_code=status.HTTP_201_CREATED,tags =["Product"])
+@app.post('/product', status_code=status.HTTP_201_CREATED, tags=["Product"])
 def add(request: ProductSchema, db: Session = Depends(get_db)):
     new_product = models.ProductModel(
         name=request.name,
@@ -30,7 +30,7 @@ def add(request: ProductSchema, db: Session = Depends(get_db)):
     return new_product
 
 
-@app.post('/seller', status_code=status.HTTP_201_CREATED,tags =["Seller"])
+@app.post('/seller', status_code=status.HTTP_201_CREATED, tags=["Seller"])
 def create_seller(request: SellerSchema, db: Session = Depends(get_db)):
     # hashed_password = pwd_context.hash(request.password)
     new_seller = models.SellerModel(
@@ -44,16 +44,23 @@ def create_seller(request: SellerSchema, db: Session = Depends(get_db)):
     return new_seller
 
 
+# @app.get('/Seller', response_model=list[schemas.DisplaySeller], status_code=status.HTTP_201_CREATED, tags=["Seller"])
+@app.get('/Seller', status_code=status.HTTP_201_CREATED, tags=["Seller"])
+def get_all_seller_info(db: Session = Depends(get_db)):
+    all_seller_info = db.query(models.SellerModel).all()
+    return {"All the seller info records ": all_seller_info}
+
+
 # response_model= DisplayProduct --> response body formatted in own way.
 # @app.get('/products', response_model=List[schemas.DisplayProduct],tags =["Product"])
-@app.get('/products',tags =["Product"])
+@app.get('/products', tags=["Product"])
 def products_get_all(db: Session = Depends(get_db)):
     products = db.query(models.ProductModel).all()
     return products
 
 
 # # response_model= schemas.DisplayProduct --> response body formatted in own way.
-@app.get('/products/{id}', response_model=schemas.DisplayProduct,tags =["Product"])
+@app.get('/products/{id}', response_model=schemas.DisplayProduct, tags=["Product"])
 def product_get(id: int, db: Session = Depends(get_db)):
     product = db.query(models.ProductModel).filter(models.ProductModel.id == id).first()
     if product is None:
@@ -63,7 +70,7 @@ def product_get(id: int, db: Session = Depends(get_db)):
         return product
 
 
-@app.delete('/products/{id}',tags =["Product"])
+@app.delete('/products/{id}', tags=["Product"])
 def product_delete(id: int, db: Session = Depends(get_db)):
     product = db.query(models.ProductModel).filter(models.ProductModel.id == id).first()
     if not product:
@@ -75,7 +82,7 @@ def product_delete(id: int, db: Session = Depends(get_db)):
         return {"product is deleted": product}
 
 
-@app.put('/products/{id}',tags =["Product"])
+@app.put('/products/{id}', tags=["Product"])
 def product(request: schemas.ProductSchema, id: int, db: Session = Depends(get_db)):
     product = db.query(models.ProductModel).filter(models.ProductModel.id == id).first()
     if not product:
