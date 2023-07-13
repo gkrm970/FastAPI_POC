@@ -23,7 +23,6 @@ class SellerSchema(BaseModel):
     email: str
     password: str
 
-
 class DisplaySeller(BaseModel):
     username: str
     email: str
