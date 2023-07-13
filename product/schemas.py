@@ -23,9 +23,6 @@ class SellerSchema(BaseModel):
     email: str
     password: str
 
-
-# this class will be used when the requirements like selected field should be present in response, then you should
-# use this class.
 class DisplaySeller(BaseModel):
     username: str
     email: str
