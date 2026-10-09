@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.database import get_db
 from app.models.seller import Seller
@@ -16,12 +16,12 @@ seller_service = SellerService(seller_repository)
 
 
 @router.post("", response_model=SellerResponse, status_code=status.HTTP_201_CREATED)
-def add_seller(data: SellerCreate, db: Session = Depends(get_db)) -> Seller:
+async def add_seller(data: SellerCreate, db: AsyncSession = Depends(get_db)) -> Seller:
     """Create a seller with a securely hashed password."""
     try:
-        return seller_service.create_seller(db, data)
+        return await seller_service.create_seller(db, data)
     except IntegrityError:
-        db.rollback()
+        await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Username or email already exists",
@@ -29,6 +29,6 @@ def add_seller(data: SellerCreate, db: Session = Depends(get_db)) -> Seller:
 
 
 @router.get("", response_model=list[SellerResponse])
-def list_sellers(db: Session = Depends(get_db)) -> list[Seller]:
+async def list_sellers(db: AsyncSession = Depends(get_db)) -> list[Seller]:
     """Return all sellers without exposing their passwords."""
-    return seller_repository.get_all(db)
+    return await seller_repository.get_all(db)

@@ -1,13 +1,15 @@
 opentelemetry-instrumentation-openai
 fastapi
 uvicorn[standard]
-sqlalchemy
-pymysql
+sqlalchemy[asyncio]
+aiosqlite
+aiomysql
 passlib[bcrypt]
 bcrypt<5
 pydantic-settings
 email-validator
 pytest
+pytest-asyncio
 opentelemetry-api
 opentelemetry-sdk
 opentelemetry-instrumentation-fastapi

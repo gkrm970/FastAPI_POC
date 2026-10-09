@@ -1,5 +1,8 @@
 """Application entry point and root health endpoint."""
 
+from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator
+
 from fastapi import FastAPI
 
 from app.api.routes import products, sellers
@@ -7,11 +10,17 @@ from app.core.telemetry import configure_telemetry
 from app.db import base  # noqa: F401
 from app.db.database import Base, engine
 
-# Create database tables if they do not exist
-Base.metadata.create_all(bind=engine)
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    """Create database tables when the application starts."""
+    async with engine.begin() as connection:
+        await connection.run_sync(Base.metadata.create_all)
+    yield
+    await engine.dispose()
 
 # Initialize FastAPI application
-app = FastAPI(title="Product API", version="1.0.0")
+app = FastAPI(title="Product API", version="1.0.0", lifespan=lifespan)
 
 # Configure telemetry for the application
 configure_telemetry(app)

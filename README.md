@@ -69,6 +69,10 @@ uvicorn app.main:app --reload
 
 View traces at `http://localhost:16686`.
 
+The API uses asynchronous FastAPI route handlers, SQLAlchemy `AsyncSession`,
+and async database drivers (`aiosqlite` for SQLite and `aiomysql` for MySQL).
+The test suite uses isolated async sessions and class-based test cases.
+
 ## Tests
 
 Install dependencies and run the test suite from the project root:

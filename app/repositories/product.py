@@ -1,7 +1,7 @@
 """Product database access operations."""
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.product import Product
 
@@ -9,24 +9,25 @@ from app.models.product import Product
 class ProductRepository:
     """Encapsulate database operations for products."""
 
-    def create(self, db: Session, product: Product) -> Product:
+    async def create(self, db: AsyncSession, product: Product) -> Product:
         """Persist and return a product."""
         db.add(product)
-        db.commit()
-        db.refresh(product)
+        await db.commit()
+        await db.refresh(product)
         return product
 
-    def get_all(self, db: Session) -> list[Product]:
+    async def get_all(self, db: AsyncSession) -> list[Product]:
         """Return all products."""
-        return list(db.scalars(select(Product)).all())
+        result = await db.scalars(select(Product))
+        return list(result.all())
 
-    def get_by_id(self, db: Session, product_id: int) -> Product | None:
+    async def get_by_id(self, db: AsyncSession, product_id: int) -> Product | None:
         """Return a product by identifier."""
-        return db.get(Product, product_id)
+        return await db.get(Product, product_id)
 
-    def update(
+    async def update(
         self,
-        db: Session,
+        db: AsyncSession,
         product: Product,
         name: str,
         description: str,
@@ -36,11 +37,11 @@ class ProductRepository:
         product.name = name
         product.description = description
         product.price = price
-        db.commit()
-        db.refresh(product)
+        await db.commit()
+        await db.refresh(product)
         return product
 
-    def delete(self, db: Session, product: Product) -> None:
+    async def delete(self, db: AsyncSession, product: Product) -> None:
         """Delete a product."""
-        db.delete(product)
-        db.commit()
+        await db.delete(product)
+        await db.commit()

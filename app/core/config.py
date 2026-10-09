@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    database_url: str = "sqlite:///./product.db"
+    database_url: str = "sqlite+aiosqlite:///./product.db"
     otel_enabled: bool = True # Enable or disable OpenTelemetry tracing
     otel_service_name: str = "product-api"
     otel_service_version: str = "1.0.0"
