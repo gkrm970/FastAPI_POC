@@ -1,0 +1,67 @@
+[tool.poetry]
+name = "fastapi-poc"
+version = "0.1.0"
+description = "FastAPI proof-of-concept project"
+authors = []
+readme = "README.md"
+packages = [{include = "app"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+sqlalchemy = {extras = ["asyncio"], version = "*"}
+aiosqlite = "*"
+aiomysql = "*"
+passlib = {extras = ["bcrypt"], version = "*"}
+bcrypt = "<5"
+pydantic-settings = "*"
+email-validator = "*"
+opentelemetry-api = "*"
+opentelemetry-sdk = "*"
+opentelemetry-instrumentation-fastapi = "*"
+opentelemetry-exporter-otlp = "*"
+opentelemetry-instrumentation-openai = "*"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+pytest-asyncio = "*"
+black = "*"
+ruff = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+include = '\.pyi?$'
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+ignore = [
+    "E501",  # line too long — handled by black
+    "B008",  # do not perform function calls in default arguments (FastAPI Depends pattern)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.ruff.format]
+# ruff format mirrors black
+quote-style = "double"
+indent-style = "space"

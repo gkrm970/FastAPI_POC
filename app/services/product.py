@@ -22,4 +22,6 @@ class ProductService:
         self, db: AsyncSession, product: Product, data: ProductCreate
     ) -> Product:
         """Update an existing product in the database."""
-        return await self.repository.update(db, product, data.name, data.description, data.price)
+        return await self.repository.update(
+            db, product, data.name, data.description, data.price
+        )

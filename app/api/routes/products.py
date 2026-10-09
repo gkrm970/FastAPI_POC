@@ -52,9 +52,7 @@ class ProductController:
         product = await self._get_product_or_404(db, product_id)
         await self.repository.delete(db, product)
 
-    async def _get_product_or_404(
-        self, db: AsyncSession, product_id: int
-    ) -> Product:
+    async def _get_product_or_404(self, db: AsyncSession, product_id: int) -> Product:
         product = await self.repository.get_by_id(db, product_id)
         if product is None:
             raise HTTPException(

@@ -1,8 +1,8 @@
 """Application entry point and root health endpoint."""
 
 import logging
-from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
@@ -23,6 +23,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     yield
     await engine.dispose()
 
+
 # Initialize FastAPI application
 app = FastAPI(title="Product API", version="1.0.0", lifespan=lifespan)
 
@@ -35,6 +36,7 @@ register_middleware(app)
 # Include routers for products and sellers
 app.include_router(products.router)
 app.include_router(sellers.router)
+
 
 # Define a health check endpoint
 @app.get("/", tags=["Health"])
