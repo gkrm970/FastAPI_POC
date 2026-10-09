@@ -48,6 +48,27 @@ uvicorn app.main:app --reload
 Interactive API documentation is available at
 `http://127.0.0.1:8000/docs`.
 
+## Telemetry
+
+The application supports OpenTelemetry HTTP tracing. It is disabled by
+default, so the API does not require a telemetry collector for local
+development. To enable tracing, set `OTEL_ENABLED=true` in `.env` and run an
+OTLP-compatible collector, such as Jaeger:
+
+```bash
+docker run --rm --name jaeger \
+  -p 16686:16686 -p 4318:4318 \
+  jaegertracing/all-in-one:latest
+```
+
+Restart the API after changing `.env`:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+View traces at `http://localhost:16686`.
+
 ## Tests
 
 Install dependencies and run the test suite from the project root:
