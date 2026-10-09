@@ -1,8 +1,11 @@
+"""Seller HTTP endpoints."""
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
+from app.models.seller import Seller
 from app.repositories import seller as seller_repository
 from app.schemas.seller import SellerCreate, SellerResponse
 from app.services.seller import create_seller
@@ -11,7 +14,8 @@ router = APIRouter(prefix="/sellers", tags=["Sellers"])
 
 
 @router.post("", response_model=SellerResponse, status_code=status.HTTP_201_CREATED)
-def add_seller(data: SellerCreate, db: Session = Depends(get_db)):
+def add_seller(data: SellerCreate, db: Session = Depends(get_db)) -> Seller:
+    """Create a seller with a securely hashed password."""
     try:
         return create_seller(db, data)
     except IntegrityError:
@@ -23,5 +27,6 @@ def add_seller(data: SellerCreate, db: Session = Depends(get_db)):
 
 
 @router.get("", response_model=list[SellerResponse])
-def list_sellers(db: Session = Depends(get_db)):
+def list_sellers(db: Session = Depends(get_db)) -> list[Seller]:
+    """Return all sellers without exposing their passwords."""
     return seller_repository.get_all(db)
