@@ -3,5 +3,7 @@ uvicorn[standard]
 sqlalchemy
 pymysql
 passlib[bcrypt]
+bcrypt<5
 pydantic-settings
 email-validator
+pytest
