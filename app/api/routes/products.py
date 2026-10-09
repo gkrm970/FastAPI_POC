@@ -5,11 +5,13 @@ from sqlalchemy.orm import Session
 
 from app.db.database import get_db
 from app.models.product import Product
-from app.repositories import product as product_repository
+from app.repositories.product import ProductRepository
 from app.schemas.product import ProductCreate, ProductResponse
-from app.services import product as product_service
+from app.services.product import ProductService
 
 router = APIRouter(prefix="/products", tags=["Products"])
+product_repository = ProductRepository()
+product_service = ProductService(product_repository)
 
 
 @router.post("", response_model=ProductResponse, status_code=status.HTTP_201_CREATED)

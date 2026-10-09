@@ -6,18 +6,20 @@ from sqlalchemy.orm import Session
 
 from app.db.database import get_db
 from app.models.seller import Seller
-from app.repositories import seller as seller_repository
+from app.repositories.seller import SellerRepository
 from app.schemas.seller import SellerCreate, SellerResponse
-from app.services.seller import create_seller
+from app.services.seller import SellerService
 
 router = APIRouter(prefix="/sellers", tags=["Sellers"])
+seller_repository = SellerRepository()
+seller_service = SellerService(seller_repository)
 
 
 @router.post("", response_model=SellerResponse, status_code=status.HTTP_201_CREATED)
 def add_seller(data: SellerCreate, db: Session = Depends(get_db)) -> Seller:
     """Create a seller with a securely hashed password."""
     try:
-        return create_seller(db, data)
+        return seller_service.create_seller(db, data)
     except IntegrityError:
         db.rollback()
         raise HTTPException(

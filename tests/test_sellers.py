@@ -1,22 +1,23 @@
 from app.core.security import hash_password, pwd_context
-from app.models.seller import Seller
-from app.repositories import seller as seller_repository
+from app.repositories.seller import SellerRepository
 from app.schemas.seller import SellerCreate
-from app.services.seller import create_seller
+from app.services.seller import SellerService
 
 
 def test_create_seller_hashes_password(db_session):
+    repository = SellerRepository()
+    service = SellerService(repository)
     data = SellerCreate(
         username="alice",
         email="alice@example.com",
         password="strong-pass-123",
     )
 
-    seller = create_seller(db_session, data)
+    seller = service.create_seller(db_session, data)
 
     assert seller.password != data.password
     assert pwd_context.verify(data.password, seller.password)
-    assert seller_repository.get_all(db_session) == [seller]
+    assert repository.get_all(db_session) == [seller]
 
 
 def test_password_hash_can_be_verified():
