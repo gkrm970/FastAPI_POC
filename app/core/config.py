@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     otel_service_version: str = "1.0.0"
     otel_environment: str = "development"
     otel_exporter_otlp_endpoint: str = "http://localhost:4318"
+    cors_allow_origins: list[str] = ["*"]
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

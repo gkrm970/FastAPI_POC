@@ -48,6 +48,17 @@ uvicorn app.main:app --reload
 Interactive API documentation is available at
 `http://127.0.0.1:8000/docs`.
 
+## Middleware
+
+Middleware lives in `app/middleware/` and is registered in `app/main.py`:
+
+- `RequestContextMiddleware` adds an `X-Request-ID` header (reusing the
+  client's value if sent), adds an `X-Process-Time` header, and logs each
+  request's method, path, status, and duration.
+- `CORSMiddleware` allows browser clients from origins listed in
+  `CORS_ALLOW_ORIGINS` (a JSON list in `.env`, e.g.
+  `["http://localhost:3000"]`).
+
 ## Telemetry
 
 The application supports OpenTelemetry HTTP tracing. It is disabled by
