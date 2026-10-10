@@ -176,10 +176,10 @@ reasoning. Interviewers usually ask follow-up questions, so be ready to explain
     A small anonymous function made of a single expression:
     `sorted(users, key=lambda u: u.age)`.
 
-27. **What do `map`, `filter`, and `functools.reduce` do?**
+27. **What do `map`, `filter`, and `functools.reduce` and `zip` do?**
     `map` applies a function to each item. `filter` keeps items where the
     function returns a truthy value. `reduce` folds items into a single value.
-    Comprehensions are often clearer.
+    `zip` pairs elements from multiple iterables. Comprehensions are often clearer.
 
 28. **What is the difference between `sorted()` and `list.sort()`?**
     `sorted()` returns a new list and works on any iterable. `.sort()` sorts a
