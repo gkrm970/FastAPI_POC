@@ -6,11 +6,10 @@ from app.main import app, lifespan
 
 @pytest.fixture
 async def client():
-    async with lifespan(app):
-        async with AsyncClient(
-            transport=ASGITransport(app=app), base_url="http://test"
-        ) as ac:
-            yield ac
+    async with lifespan(app), AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as ac:
+        yield ac
 
 
 async def test_health_check(client: AsyncClient):
