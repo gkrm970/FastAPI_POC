@@ -259,7 +259,7 @@ reasoning. Interviewers usually ask follow-up questions, so be ready to explain
     Encapsulation, abstraction, inheritance, and polymorphism.
 
 46. **How does Python handle private attributes?**
-    By convention: `_name` means internal. `__name` triggers name mangling to
+    By convention: `_name` means internal protected variable. `__name` triggers name mangling to
     `_ClassName__name`, which prevents accidental override in subclasses. It is
     not true privacy.
 
@@ -307,6 +307,12 @@ reasoning. Interviewers usually ask follow-up questions, so be ready to explain
 55. **What is a closure?**
     An inner function that remembers variables from its enclosing scope after
     the outer function has returned.
+    "A closure is a function that remembers the variables from its enclosing scope even after that scope has finished executing."
+
+    Three conditions for a closure
+    1. There must be a nested function (function inside a function)
+    2. The inner function must refer to a variable from the outer function
+    3. The outer function must return the inner function
 
 56. **What is a decorator? Write one.**
     A callable that takes a function and returns a new function that adds
@@ -349,6 +355,12 @@ reasoning. Interviewers usually ask follow-up questions, so be ready to explain
     An iterable has `__iter__` and can be looped over repeatedly (for example a
     list). An iterator has `__iter__` and `__next__`, tracks its position, and is
     exhausted after one pass.
+    # Iterable Protocol      → must implement:
+    __iter__()               # returns an iterator object
+
+    # Iterator Protocol      → must implement BOTH:
+    __iter__()               # returns self
+    __next__()               # returns next value, raises StopIteration when done
 
 63. **How do context managers work?**
     `with` calls `__enter__` at the start and `__exit__` at the end, even if an
