@@ -1,0 +1,60 @@
+name: ci-cd
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  id-token: write # OIDC login to Azure, no stored password
+  contents: read
+
+env:
+  ACR_NAME: myacr # TODO: replace with your ACR name
+  IMAGE_NAME: product-api
+  AKS_RESOURCE_GROUP: rg-poc # TODO: replace
+  AKS_CLUSTER: aks-poc # TODO: replace
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      OTEL_ENABLED: "false"
+      DATABASE_URL: sqlite+aiosqlite:///./test.db
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install poetry
+      - run: poetry install --no-root
+      - run: poetry run ruff check .
+      - run: poetry run pytest
+
+  build-deploy:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Build and push image to ACR
+        run: |
+          az acr login --name $ACR_NAME
+          IMAGE=$ACR_NAME.azurecr.io/$IMAGE_NAME:${{ github.sha }}
+          docker build -t $IMAGE .
+          docker push $IMAGE
+      - uses: azure/aks-set-context@v4
+        with:
+          resource-group: ${{ env.AKS_RESOURCE_GROUP }}
+          cluster-name: ${{ env.AKS_CLUSTER }}
+      - name: Deploy to AKS
+        run: |
+          IMAGE=$ACR_NAME.azurecr.io/$IMAGE_NAME:${{ github.sha }}
+          kubectl apply -f k8s/
+          kubectl set image deployment/product-api product-api=$IMAGE
+          kubectl rollout status deployment/product-api --timeout=180s

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-api-config
+data:
+  OTEL_ENABLED: "false"
+  OTEL_SERVICE_NAME: product-api
+  OTEL_ENVIRONMENT: production
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+  CORS_ALLOW_ORIGINS: '["*"]'
+# The Secret "product-api-secret" (DATABASE_URL) is intentionally NOT defined here,
+# so `kubectl apply -f k8s/` never overwrites it. Create it once per cluster:
+#   kubectl create secret generic product-api-secret \
+#     --from-literal=DATABASE_URL='mysql+aiomysql://user:pass@host:3306/db'
+# or sync it from Azure Key Vault.

@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-api
+spec:
+  type: ClusterIP
+  selector:
+    app: product-api
+  ports:
+    - port: 80
+      targetPort: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: product-api
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: product-api
+                port:
+                  number: 80
